@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Погода в Кургане</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .weather-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            font-size: 28px;
+        }
+
+        .label {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .desc {
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background: #00c6ff;
+            color: black;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00a2d3;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>🌤 Погода в Кургане</h1>
+
+    <div class="weather-main">
+        <div>
+            <div class="label">Температура</div>
+            <div id="temp">--°C</div>
+        </div>
+
+        <div>
+            <div class="label">Ветер</div>
+            <div id="wind">-- м/с</div>
+        </div>
+    </div>
+
+    <div class="desc" id="desc"></div>
+    <div class="status" id="status">Загрузка...</div>
+
+    <button onclick="getWeather()">Обновить</button>
+</div>
+
+<script>
+const apiKey = "45d9b12cbb2766f0860510642821f21b";
+const city = "Kurgan";
+
+async function getWeather() {
+    const status = document.getElementById("status");
+    status.innerText = "Обновляем...";
+
+    try {
+        const res = await fetch(
+            https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ru
+        );
+
+        const data = await res.json();
+
+        document.getElementById("temp").innerText =
+            Math.round(data.main.temp) + "°C";
+
+        document.getElementById("wind").innerText =
+            data.wind.speed + " м/с";
+
+        document.getElementById("desc").innerText =
+            data.weather[0].description;
+
+        status.innerText = "Обновлено";
+
+    } catch (e) {
+        status.innerText = "Ошибка загрузки";
+    }
+}
+
+// автообновление
+getWeather();
+setInterval(getWeather, 600000); // каждые 10 минут
+</script>
+
+</body>
+</html>
